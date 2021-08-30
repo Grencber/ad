@@ -106,6 +106,15 @@ public class MenuService {
 				amountResponse.setDiscountedAmount(objectNode1.get("discounted amount").doubleValue());
 				amountResponse.setOriginalAmount(objectNode1.get("original amount").doubleValue());
 			}
+		} else if (objectNode1.get("eligiblity").booleanValue()) {
+			amountResponse.setDiscountedAmount(objectNode1.get("discounted amount").doubleValue());
+			amountResponse.setOriginalAmount(objectNode1.get("original amount").doubleValue());
+		} else if (objectNode2.get("eligiblity").booleanValue()) {
+			amountResponse.setDiscountedAmount(objectNode2.get("discounted amount").doubleValue());
+			amountResponse.setOriginalAmount(objectNode2.get("original amount").doubleValue());
+		} else {
+			amountResponse.setDiscountedAmount(objectNode1.get("original amount").doubleValue());
+			amountResponse.setOriginalAmount(objectNode1.get("original amount").doubleValue());
 		}
 		return amountResponse;
 	}

@@ -29,11 +29,11 @@ public class InitialItemGeneratorService implements CommandLineRunner{
 		Item drinkItem4 = new Item("Tea", "drink", 3);
 		itemRepo.save(drinkItem4);
 		
-		Item toppingItem1 = new Item("Milk", "topping", 5);
+		Item toppingItem1 = new Item("Milk", "topping", 2);
 		itemRepo.save(toppingItem1);
-		Item toppingItem2 = new Item("Hazelnut syrup", "topping", 2);
+		Item toppingItem2 = new Item("Hazelnut syrup", "topping", 3);
 		itemRepo.save(toppingItem2);
-		Item toppingItem3 = new Item("Chocolate sauce", "topping", 2);
+		Item toppingItem3 = new Item("Chocolate sauce", "topping", 5);
 		itemRepo.save(toppingItem3);
 		Item toppingItem4 = new Item("Lemon", "topping", 2);
 		itemRepo.save(toppingItem4);
