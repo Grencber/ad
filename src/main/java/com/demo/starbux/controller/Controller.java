@@ -11,10 +11,18 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.starbux.domain.Cart;
+import com.demo.starbux.domain.CombinationToppingItem;
+import com.demo.starbux.domain.DrinkCombination;
 import com.demo.starbux.domain.Item;
+import com.demo.starbux.domain.Order;
 import com.demo.starbux.domain.cart.CartDrink;
 import com.demo.starbux.domain.response.AmountResponse;
 import com.demo.starbux.domain.response.Menu;
+import com.demo.starbux.repositories.CombinationToppingItemRepo;
+import com.demo.starbux.repositories.DrinkCombinationRepo;
+import com.demo.starbux.repositories.ItemRepo;
+import com.demo.starbux.repositories.OrderRepo;
+import com.demo.starbux.repositories.implementations.ItemRepoInterfaceImpl;
 import com.demo.starbux.service.CartService;
 import com.demo.starbux.service.MenuService;
 
@@ -23,6 +31,21 @@ public class Controller {
 	
 	@Autowired
 	private MenuService menuService;
+	
+	@Autowired
+	private OrderRepo orderRepo;
+	
+	@Autowired
+	private DrinkCombinationRepo drinkCombinationRepo;
+
+	@Autowired
+	private ItemRepo ItemRepo;
+	
+	@Autowired
+	private ItemRepoInterfaceImpl itemRepoInterfaceImpl;
+	
+	@Autowired
+	private CombinationToppingItemRepo combinationToppingItemRepo;
 	
 	@GetMapping("/menu")
 	public ResponseEntity<Menu> getMenu() {
@@ -46,5 +69,26 @@ public class Controller {
 	public ResponseEntity<AmountResponse> finalizeOrder() {
 		
 		return new ResponseEntity<AmountResponse>(menuService.finalizeOrder(),HttpStatus.OK);
+	}
+	
+	@GetMapping("/create")
+	public String createOrder() {
+		List<CartDrink> cartDrinkList = menuService.getCart().getCartItems();
+		Order order = new Order(menuService.finalizeOrder().getOriginalAmount(), 0, menuService.finalizeOrder().getDiscountedAmount());
+		Order savedOrder = orderRepo.save(order);
+		for (int i = 0; i < cartDrinkList.size(); i++) {
+			DrinkCombination drinkCombination = new DrinkCombination(itemRepoInterfaceImpl.findByName(cartDrinkList.get(i).getDrinkName()), savedOrder.getId());
+			DrinkCombination savedDrinkCombination = drinkCombinationRepo.save(drinkCombination);
+			
+			for(int j = 0; j < cartDrinkList.get(i).getDrinkToppings().size();j++) {
+				CombinationToppingItem combinationToppingItem = new CombinationToppingItem(savedDrinkCombination.getId(), itemRepoInterfaceImpl
+																			.findByName(cartDrinkList.get(i).getDrinkToppings().get(j).getToppingName()));
+				combinationToppingItemRepo.save(combinationToppingItem);
+			}
+			
+		}
+		
+		return "Success";
+		
 	}
 }
