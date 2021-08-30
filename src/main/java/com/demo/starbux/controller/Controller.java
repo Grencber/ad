@@ -13,7 +13,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.demo.starbux.domain.Cart;
 import com.demo.starbux.domain.Item;
 import com.demo.starbux.domain.cart.CartDrink;
+import com.demo.starbux.domain.response.AmountResponse;
 import com.demo.starbux.domain.response.Menu;
+import com.demo.starbux.service.CartService;
 import com.demo.starbux.service.MenuService;
 
 @RestController
@@ -38,5 +40,11 @@ public class Controller {
 	public ResponseEntity<String> addItem(@RequestBody CartDrink cartDrink) {
 		String result = menuService.addItem(cartDrink);
 		return new ResponseEntity<String>(result,HttpStatus.OK);
+	}
+	
+	@GetMapping("/finalize")
+	public ResponseEntity<AmountResponse> finalizeOrder() {
+		
+		return new ResponseEntity<AmountResponse>(menuService.finalizeOrder(),HttpStatus.OK);
 	}
 }
