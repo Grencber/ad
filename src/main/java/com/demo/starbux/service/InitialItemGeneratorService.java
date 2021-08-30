@@ -29,7 +29,7 @@ public class InitialItemGeneratorService implements CommandLineRunner{
 		Item drinkItem4 = new Item("Tea", "drink", 3);
 		itemRepo.save(drinkItem4);
 		
-		Item toppingItem1 = new Item("Milk", "topping", 2);
+		Item toppingItem1 = new Item("Milk", "topping", 5);
 		itemRepo.save(toppingItem1);
 		Item toppingItem2 = new Item("Hazelnut syrup", "topping", 2);
 		itemRepo.save(toppingItem2);

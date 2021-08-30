@@ -20,6 +20,9 @@ public class MenuService {
 	@Autowired
 	private ItemRepo itemRepo;
 	
+	@Autowired
+	private CartService cartService;
+	
 	private Cart cart = new Cart();
 	public Menu getMenu() {
 		Menu menu = new Menu();
@@ -45,6 +48,7 @@ public class MenuService {
 			for (Item current: itemRepo.findAll()) {
 				if (current.getItemName().equalsIgnoreCase(cartDrink.getDrinkName())) {
 					allowedItemNameFlag = true;
+					cartDrink.setDrinkPrice(cartService.getCartDrinkPrice(cartDrink));
 				}
 			}
 			
@@ -72,7 +76,7 @@ public class MenuService {
 				}
 				
 			}
-			
+			cartService.setCartDrinkToppingPrice(cartDrink);
 			cart.getCartItems().add(cartDrink);
 			
 		}

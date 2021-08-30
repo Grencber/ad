@@ -42,5 +42,5 @@ public class CartDrink {
 	public void setDrinkPrice(double drinkPrice) {
 		this.drinkPrice = drinkPrice;
 	}
-	
+		
 }
