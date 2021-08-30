@@ -1,6 +1,7 @@
 package com.demo.starbux.service;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ public class MenuService {
 			boolean allowedItemNameFlag = false;
 			
 			for (Item current: itemRepo.findAll()) {
-				if (current.getItemName().equals(cartDrink.getDrinkName())) {
+				if (current.getItemName().equalsIgnoreCase(cartDrink.getDrinkName())) {
 					allowedItemNameFlag = true;
 				}
 			}
@@ -56,22 +57,24 @@ public class MenuService {
 				int matchedTopping = 0;
 				for (Item current: itemRepo.findAll()) {
 					
-					if (current.getItemType().equals("topping")) {
+					if (current.getItemType().equalsIgnoreCase("topping")) {
 						for (Topping topping : desiredToppings) {
-							if (topping.getToppingName().equals(current.getItemName())) {
+							if (topping.getToppingName().equalsIgnoreCase(current.getItemName())) {
 								matchedTopping++;
 							}
 						}
-						if (matchedTopping != desiredToppings.size()) {
-							return "Please choose allowed toppings!";
-						}
+						
 						
 					}
+				}
+				if (matchedTopping != desiredToppings.size()) {
+					return "Please choose allowed toppings!";
 				}
 				
 			}
 			
 			cart.getCartItems().add(cartDrink);
+			
 		}
 		
 		return "item is added to cart";
