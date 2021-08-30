@@ -1,5 +1,6 @@
 package com.demo.starbux.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.stereotype.Service;
 import com.demo.starbux.domain.Cart;
 import com.demo.starbux.domain.Item;
 import com.demo.starbux.domain.cart.CartDrink;
+import com.demo.starbux.domain.cart.Topping;
 import com.demo.starbux.domain.response.Menu;
 import com.demo.starbux.repositories.ItemRepo;
 
@@ -37,10 +39,41 @@ public class MenuService {
 
 	public String addItem(CartDrink cartDrink) {
 		if (cartDrink != null) {
+			boolean allowedItemNameFlag = false;
+			
+			for (Item current: itemRepo.findAll()) {
+				if (current.getItemName().equals(cartDrink.getDrinkName())) {
+					allowedItemNameFlag = true;
+				}
+			}
+			
+			if (allowedItemNameFlag == false) {
+				return "Please choose allowed drink";
+			}
+			
+			if (!cartDrink.getDrinkToppings().isEmpty()) {
+				List<Topping> desiredToppings = cartDrink.getDrinkToppings();
+				int matchedTopping = 0;
+				for (Item current: itemRepo.findAll()) {
+					
+					if (current.getItemType().equals("topping")) {
+						for (Topping topping : desiredToppings) {
+							if (topping.getToppingName().equals(current.getItemName())) {
+								matchedTopping++;
+							}
+						}
+						if (matchedTopping != desiredToppings.size()) {
+							return "Please choose allowed toppings!";
+						}
+						
+					}
+				}
+				
+			}
+			
 			cart.getCartItems().add(cartDrink);
-			return "item is added to cart";
 		}
 		
-		return "No items are added";
+		return "item is added to cart";
 	}
 }
