@@ -1,11 +1,13 @@
 package com.demo.starbux.controller;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,7 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.demo.starbux.domain.Item;
+import com.demo.starbux.domain.Order;
+import com.demo.starbux.domain.response.OrderResponse;
 import com.demo.starbux.repositories.ItemRepo;
+import com.demo.starbux.repositories.OrderRepo;
 
 @RestController
 @RequestMapping("/admin")
@@ -23,6 +28,9 @@ public class ControllerAdmin {
 	
 	@Autowired
 	private ItemRepo itemRepo;
+	
+	@Autowired
+	private OrderRepo orderRepo;
 	
 	@PostMapping("/create")
 	public ResponseEntity<String> create(@RequestBody Item requestedItem) {
@@ -48,6 +56,16 @@ public class ControllerAdmin {
 			return ResponseEntity.ok("Item is deleted");
 		}
 		return ResponseEntity.notFound().build();
-		
+	}
+	
+	@GetMapping("/reports")
+	public ResponseEntity<OrderResponse> getReports() {
+		Iterable<Order> iterablelist = orderRepo.findAll();
+		ArrayList<Order> orderList = new ArrayList<>();
+		for (Order order : iterablelist) {
+			orderList.add(order);
+		}
+		OrderResponse orderResponse = new OrderResponse(orderList);
+		return ResponseEntity.ok(orderResponse);
 	}
 }

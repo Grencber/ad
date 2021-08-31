@@ -48,6 +48,10 @@ public class MenuService {
 	public Cart getCart() {
 		return cart;
 	}
+	
+	public void removeCart() {
+		cart = new Cart();
+	}
 
 	public String addItem(CartDrink cartDrink) {
 		if (cartDrink != null) {

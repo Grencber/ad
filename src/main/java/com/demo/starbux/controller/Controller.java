@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -71,10 +72,13 @@ public class Controller {
 		return new ResponseEntity<AmountResponse>(menuService.finalizeOrder(),HttpStatus.OK);
 	}
 	
-	@GetMapping("/create")
-	public String createOrder() {
+	@GetMapping("/create/{userId}")
+	public String createOrder(@PathVariable Integer userId) {
 		List<CartDrink> cartDrinkList = menuService.getCart().getCartItems();
-		Order order = new Order(menuService.finalizeOrder().getOriginalAmount(), 0, menuService.finalizeOrder().getDiscountedAmount());
+		Order order = new Order(userId,menuService.finalizeOrder().getOriginalAmount(),
+				menuService.finalizeOrder().getOriginalAmount() - menuService.finalizeOrder().getDiscountedAmount(),
+				menuService.finalizeOrder().getDiscountedAmount());
+		
 		Order savedOrder = orderRepo.save(order);
 		for (int i = 0; i < cartDrinkList.size(); i++) {
 			DrinkCombination drinkCombination = new DrinkCombination(itemRepoInterfaceImpl.findByName(cartDrinkList.get(i).getDrinkName()), savedOrder.getId());
@@ -87,7 +91,7 @@ public class Controller {
 			}
 			
 		}
-		
+		menuService.removeCart();
 		return "Success";
 		
 	}

@@ -15,6 +15,8 @@ public class Order {
 	@GeneratedValue
 	private Integer id;
 	@Nullable
+	private Integer user;
+	@Nullable
 	private double orderGross;
 	@Nullable
 	private double orderDiscount;
@@ -22,39 +24,55 @@ public class Order {
 	private double orderNet;
 	
 	public Order() {
+
 	}
 	
-	public Order(double orderGross, double orderDiscount, double orderNet) {
+	public Order(Integer user, double orderGross, double orderDiscount, double orderNet) {
 		super();
+		this.user = user;
 		this.orderGross = orderGross;
 		this.orderDiscount = orderDiscount;
 		this.orderNet = orderNet;
 	}
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
+
+	public Integer getUser() {
+		return user;
+	}
+
+	public void setUser(Integer user) {
+		this.user = user;
+	}
+
 	public double getOrderGross() {
 		return orderGross;
 	}
+
 	public void setOrderGross(double orderGross) {
 		this.orderGross = orderGross;
 	}
+
 	public double getOrderDiscount() {
 		return orderDiscount;
 	}
+
 	public void setOrderDiscount(double orderDiscount) {
 		this.orderDiscount = orderDiscount;
 	}
+
 	public double getOrderNet() {
 		return orderNet;
 	}
+
 	public void setOrderNet(double orderNet) {
 		this.orderNet = orderNet;
 	}
-	
-	
 	
 }
