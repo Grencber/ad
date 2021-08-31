@@ -1,6 +1,9 @@
 package com.demo.starbux.controller;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +19,17 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.demo.starbux.domain.CombinationToppingItem;
+import com.demo.starbux.domain.DrinkCombination;
 import com.demo.starbux.domain.Item;
 import com.demo.starbux.domain.Order;
 import com.demo.starbux.domain.response.OrderResponse;
+import com.demo.starbux.repositories.CombinationToppingItemRepo;
+import com.demo.starbux.repositories.DrinkCombinationRepo;
 import com.demo.starbux.repositories.ItemRepo;
 import com.demo.starbux.repositories.OrderRepo;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 @RestController
 @RequestMapping("/admin")
@@ -31,6 +40,9 @@ public class ControllerAdmin {
 	
 	@Autowired
 	private OrderRepo orderRepo;
+	
+	@Autowired
+	private CombinationToppingItemRepo combinationToppingItemRepo;
 	
 	@PostMapping("/create")
 	public ResponseEntity<String> create(@RequestBody Item requestedItem) {
@@ -58,8 +70,8 @@ public class ControllerAdmin {
 		return ResponseEntity.notFound().build();
 	}
 	
-	@GetMapping("/reports")
-	public ResponseEntity<OrderResponse> getReports() {
+	@GetMapping("/reports/total-amount-per-customer")
+	public ResponseEntity<OrderResponse> getReportForTotalAmountOfOrderPerCustomer() {
 		Iterable<Order> iterablelist = orderRepo.findAll();
 		ArrayList<Order> orderList = new ArrayList<>();
 		for (Order order : iterablelist) {
@@ -67,5 +79,27 @@ public class ControllerAdmin {
 		}
 		OrderResponse orderResponse = new OrderResponse(orderList);
 		return ResponseEntity.ok(orderResponse);
+	}
+	
+	@GetMapping("/reports/most-used-toppings-for-drinks")
+	public ResponseEntity<ObjectNode> getReportForMostUsedToppingsForDrinks() {
+		
+		Map<Integer, Integer> drinkMap = new HashMap<>();
+		
+		for (CombinationToppingItem curr : combinationToppingItemRepo.findAll()) {
+			if (!drinkMap.containsKey(curr.getToppingItemId())) {
+				drinkMap.put(curr.getToppingItemId(), 1);
+			} else {
+				int value = drinkMap.get(curr.getToppingItemId());
+				drinkMap.put(curr.getToppingItemId(), ++value);
+			}
+		}
+		drinkMap.entrySet().stream().sorted(Map.Entry.comparingByValue()).forEach(System.out::println);
+		ObjectMapper objectMapper = new ObjectMapper();
+		ObjectNode objectNode = objectMapper.createObjectNode();
+		for (Entry<Integer, Integer> element : drinkMap.entrySet()) {
+			objectNode.put(itemRepo.findById(element.getKey()).get().getItemName(), element.getValue()); 
+		}
+		return ResponseEntity.ok(objectNode);
 	}
 }
