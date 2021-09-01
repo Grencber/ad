@@ -40,9 +40,6 @@ public class Controller {
 	private DrinkCombinationRepo drinkCombinationRepo;
 
 	@Autowired
-	private ItemRepo ItemRepo;
-	
-	@Autowired
 	private ItemRepoInterfaceImpl itemRepoInterfaceImpl;
 	
 	@Autowired
@@ -63,6 +60,9 @@ public class Controller {
 	@PostMapping("/addItem")
 	public ResponseEntity<String> addItem(@RequestBody CartDrink cartDrink) {
 		String result = menuService.addItem(cartDrink);
+		if (result == null) {
+			return new ResponseEntity<String>("Invalid DrinkName / ToppingName", HttpStatus.BAD_REQUEST);
+		}
 		return new ResponseEntity<String>(result,HttpStatus.OK);
 	}
 	

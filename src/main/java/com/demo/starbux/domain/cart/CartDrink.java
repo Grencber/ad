@@ -13,6 +13,13 @@ public class CartDrink {
 		drinkToppings = new ArrayList<>();
 	}
 	
+	public CartDrink(List<Topping> drinkToppings, String drinkName) {
+		super();
+		this.drinkToppings = drinkToppings;
+		this.drinkName = drinkName;
+		
+	}
+	
 	public CartDrink(List<Topping> drinkToppings, String drinkName, double drinkPrice) {
 		super();
 		this.drinkToppings = drinkToppings;

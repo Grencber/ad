@@ -5,6 +5,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +17,7 @@ import com.demo.starbux.domain.cart.Topping;
 import com.demo.starbux.domain.response.AmountResponse;
 import com.demo.starbux.domain.response.Menu;
 import com.demo.starbux.repositories.ItemRepo;
+import com.demo.starbux.repositories.implementations.ItemRepoInterfaceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -25,7 +28,12 @@ public class MenuService {
 	private ItemRepo itemRepo;
 	
 	@Autowired
+	private ItemRepoInterfaceImpl itemRepoInterfaceImpl;
+	
+	@Autowired
 	private CartService cartService;
+	
+	final Logger log = LoggerFactory.getLogger(MenuService.class);
 	
 	private Cart cart = new Cart();
 	private static ObjectMapper objectMapper = new ObjectMapper();
@@ -65,7 +73,8 @@ public class MenuService {
 			}
 			
 			if (allowedItemNameFlag == false) {
-				return "Please choose allowed drink";
+				log.error("Please choose allowed drink. {} is not a valid drinkname", cartDrink.getDrinkName());
+				return null;
 			}
 			
 			if (!cartDrink.getDrinkToppings().isEmpty()) {
@@ -79,12 +88,14 @@ public class MenuService {
 								matchedTopping++;
 							}
 						}
-						
-						
 					}
 				}
 				if (matchedTopping != desiredToppings.size()) {
-					return "Please choose allowed toppings!";
+					log.error("Please choose allowed toppings. Some of the below are not allowed:");
+					for (Topping currentTopping : desiredToppings) {
+						log.error("Topping name -> {} ", currentTopping.getToppingName());
+					}
+					return null;
 				}
 				
 			}
