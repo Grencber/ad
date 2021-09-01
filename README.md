@@ -1,7 +1,9 @@
 Endpoints----------
 
 /menu -> returns all the available toppings and drinks list
+
 /cart -> returns all the drinks with toppings(if they have)
+
 /addItem -> adds new items to the cart if the requested item is in the menu.
 /finalize -> returns original amount and discounted amount of the current cart.
 /create/{userId} -> (prerequisite= /addItem must be called beforehand in order to transfer the cart contents to a specific userId.) assigns the current cart to a userId.
