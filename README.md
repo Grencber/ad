@@ -15,8 +15,11 @@ Testing-------------------------------
 ****ControllerUser API*****
 
 1-)In order to see which item to add, call "/menu" endpoint.
+
 2-)Open an api client of your choice(e.g Postman) and make a requestbody
+
 (e.g below):
+
 {
     "drinkName": "tea",
     "drinkToppings": [
@@ -28,27 +31,39 @@ Testing-------------------------------
         }
     ]
 }
+
 3-)To request url enter: http://localhost:8080/addItem to add Tea with a topping lemon and chocolate sauce.
+
 4-)Add as much drinks as you want in following manner(you can leave drinkToppings field's value empty / put just one topping and post as in step (3).
+
 5-)Call /finalize. You see that original amount and the discounted amount for the current cart is displayed.
+
 6-)Open postman and call create/{userId} (e.g create/1) to add the current cart to the specific user having the very userId.
+
 7-)After step 6, call /cart endpoint to make sure that your cart is emptied
+
 8-)You can repeat from step 1 to 6 in same manner and fill your cart and transfer the cart contents this time to another userId (e.g by calling create/2 . 
 
 ****ControllerAdmin API*****
 
 /admin/create -> creates a new item
+
 e.g Send the following json with Postman by calling /create
+
 {
       "itemName": "Coca cola",
       "itemType": "drink",
       "itemPrice": 10.0
 }
+
 you see that in addition to 8 items initiated at the beginning, there is a new item having the info above.
+
 /admin/update -> updates the item with the sent requestbody
+
 /admin/delete/{id} -> deletes the item with the specific id.
 
 1-) /admin/reports/total-amount-per-customer -> shows original and discounted amounts of each user's carts.
+
 E.g
 {
   "totalOrders": [
@@ -70,6 +85,7 @@ E.g
 }
 
 2-) /admin/reports/most-used-toppings-for-drinks -> shows all used toppings for all carts with the most big at the top and the lowest at the bottom.
+
 E.g
 {
   "Chocolate sauce": 3,
