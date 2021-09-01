@@ -25,6 +25,12 @@ public class Item {
 	
 	}
 	
+	public Item(String itemName, String itemType) {
+		super();
+		this.itemName = itemName;
+		this.itemType = itemType;
+	}
+	
 	public Item(String itemName, String itemType, double itemPrice) {
 		super();
 		this.itemName = itemName;

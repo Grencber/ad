@@ -28,6 +28,9 @@ public class CartService {
 
 	public void setCartDrinkToppingPrice(CartDrink cartDrink) {
 		List<Topping> drinkToppingList = cartDrink.getDrinkToppings();
+		if (drinkToppingList == null) {
+			return;
+		}
 		for (int i = 0; i < drinkToppingList.size(); i++) {
 			for (Item currentItem : itemRepo.findAll()) {
 				if (currentItem.getItemName().equalsIgnoreCase(drinkToppingList.get(i).getToppingName())) {

@@ -4,6 +4,10 @@ public class Topping {
 	private String toppingName;
 	private double toppingPrice;
 	
+	public Topping() {
+
+	}
+	
 	public Topping(String toppingName) {
 		super();
 		this.toppingName = toppingName;

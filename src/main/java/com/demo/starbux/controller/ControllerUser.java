@@ -28,7 +28,7 @@ import com.demo.starbux.service.CartService;
 import com.demo.starbux.service.MenuService;
 
 @RestController
-public class Controller {
+public class ControllerUser {
 	
 	@Autowired
 	private MenuService menuService;

@@ -26,85 +26,89 @@ public class MenuService {
 
 	@Autowired
 	private ItemRepo itemRepo;
-	
+
 	@Autowired
 	private ItemRepoInterfaceImpl itemRepoInterfaceImpl;
-	
+
 	@Autowired
 	private CartService cartService;
-	
+
 	final Logger log = LoggerFactory.getLogger(MenuService.class);
-	
+
 	private Cart cart = new Cart();
 	private static ObjectMapper objectMapper = new ObjectMapper();
 	private static ObjectNode objectNode1 = objectMapper.createObjectNode();
 	private static ObjectNode objectNode2 = objectMapper.createObjectNode();
 	
+	private final String cartIsAddedToCart = "item is added to cart";
+
 	public Menu getMenu() {
 		Menu menu = new Menu();
-		for(Item item:itemRepo.findAll()) {
-			if(item.getItemType().equals("drink")) {
+		for (Item item : itemRepo.findAll()) {
+			if (item.getItemType().equals("drink")) {
 				menu.getDrinks().add(item);
-			}else {
+			} else {
 				menu.getToppings().add(item);
 			}
 		}
-		
+
 		return menu;
 	}
-	
+
 	public Cart getCart() {
 		return cart;
 	}
-	
+
 	public void removeCart() {
 		cart = new Cart();
 	}
 
 	public String addItem(CartDrink cartDrink) {
-		if (cartDrink != null) {
-			boolean allowedItemNameFlag = false;
-			
-			for (Item current: itemRepo.findAll()) {
-				if (current.getItemName().equalsIgnoreCase(cartDrink.getDrinkName())) {
-					allowedItemNameFlag = true;
-					cartDrink.setDrinkPrice(cartService.getCartDrinkPrice(cartDrink));
-				}
+		if (cartDrink == null) {
+			return null;
+		}
+		
+		boolean allowedItemNameFlag = false;
+
+		for (Item current : itemRepo.findAll()) {
+			if (current.getItemName().equalsIgnoreCase(cartDrink.getDrinkName())) {
+				allowedItemNameFlag = true;
+				cartDrink.setDrinkPrice(cartService.getCartDrinkPrice(cartDrink));
 			}
-			
-			if (allowedItemNameFlag == false) {
-				log.error("Please choose allowed drink. {} is not a valid drinkname", cartDrink.getDrinkName());
-				return null;
-			}
-			
-			if (!cartDrink.getDrinkToppings().isEmpty()) {
-				List<Topping> desiredToppings = cartDrink.getDrinkToppings();
-				int matchedTopping = 0;
-				for (Item current: itemRepo.findAll()) {
-					
-					if (current.getItemType().equalsIgnoreCase("topping")) {
-						for (Topping topping : desiredToppings) {
-							if (topping.getToppingName().equalsIgnoreCase(current.getItemName())) {
-								matchedTopping++;
-							}
+		}
+
+		if (allowedItemNameFlag == false) {
+			log.error("Please choose allowed drink. {} is not a valid drinkname", cartDrink.getDrinkName());
+			return null;
+		}
+
+		if (cartDrink.getDrinkToppings() != null && !cartDrink.getDrinkToppings().isEmpty()) {
+
+			List<Topping> desiredToppings = cartDrink.getDrinkToppings();
+			int matchedTopping = 0;
+			for (Item current : itemRepo.findAll()) {
+
+				if (current.getItemType().equalsIgnoreCase("topping")) {
+					for (Topping topping : desiredToppings) {
+						if (topping.getToppingName().equalsIgnoreCase(current.getItemName())) {
+							matchedTopping++;
 						}
 					}
 				}
-				if (matchedTopping != desiredToppings.size()) {
-					log.error("Please choose allowed toppings. Some of the below are not allowed:");
-					for (Topping currentTopping : desiredToppings) {
-						log.error("Topping name -> {} ", currentTopping.getToppingName());
-					}
-					return null;
-				}
-				
 			}
-			cartService.setCartDrinkToppingPrice(cartDrink);
-			cart.getCartItems().add(cartDrink);
-			
+			if (matchedTopping != desiredToppings.size()) {
+				log.error("Please choose allowed toppings. Some of the below are not allowed:");
+				for (Topping currentTopping : desiredToppings) {
+					log.error("Topping name -> {} ", currentTopping.getToppingName());
+				}
+				return null;
+			}
+
 		}
-		
-		return "item is added to cart";
+		cartService.setCartDrinkToppingPrice(cartDrink);
+		cart.getCartItems().add(cartDrink);
+
+		return cartIsAddedToCart;
 	}
 
 	public AmountResponse finalizeOrder() {
@@ -114,7 +118,8 @@ public class MenuService {
 		isCartEligibleForMoreThan12Promotion(cart);
 		isCartEligibleFor3OrMoreThan3DrinksPromotion(cart);
 		if (objectNode1.get("eligiblity").booleanValue() & objectNode2.get("eligiblity").booleanValue()) {
-			if (objectNode1.get("discounted amount").doubleValue() > objectNode2.get("discounted amount").doubleValue()) {
+			if (objectNode1.get("discounted amount").doubleValue() > objectNode2.get("discounted amount")
+					.doubleValue()) {
 				amountResponse.setDiscountedAmount(objectNode2.get("discounted amount").doubleValue());
 				amountResponse.setOriginalAmount(objectNode2.get("original amount").doubleValue());
 			} else {
@@ -143,16 +148,16 @@ public class MenuService {
 				sum += currentDrink.getDrinkToppings().get(i).getToppingPrice();
 			}
 		}
-		
+
 		if (sum > 12) {
 			promotionEligiblityFlag1 = true;
 		}
-		
+
 		objectNode1.put("eligiblity", promotionEligiblityFlag1);
 		objectNode1.put("original amount", sum);
 		objectNode1.put("discounted amount", sum * 0.75);
 	}
-	
+
 	private void isCartEligibleFor3OrMoreThan3DrinksPromotion(Cart cart) {
 		boolean promotionEligiblityFlag2 = false;
 		double min = 0;
@@ -174,7 +179,7 @@ public class MenuService {
 			drinkSumsList.remove(min);
 			sum = drinkSumsList.stream().mapToDouble(Double::doubleValue).sum();
 		}
-		
+
 		objectNode2.put("eligiblity", promotionEligiblityFlag2);
 		objectNode2.put("original amount", originalAmount);
 		objectNode2.put("discounted amount", sum);
