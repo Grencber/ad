@@ -5,8 +5,11 @@ Endpoints----------
 /addItem -> adds new items to the cart if the requested item is in the menu.
 /finalize -> returns original amount and discounted amount of the current cart.
 /create/{userId} -> (prerequisite= /addItem must be called beforehand in order to transfer the cart contents to a specific userId.) assigns the current cart to a userId.
+
 Testing-------------------------------
+
 ****ControllerUser API*****
+
 1-)In order to see which item to add, call "/menu" endpoint.
 2-)Open an api client of your choice(e.g Postman) and make a requestbody
 (e.g below):
@@ -27,7 +30,9 @@ Testing-------------------------------
 6-)Open postman and call create/{userId} (e.g create/1) to add the current cart to the specific user having the very userId.
 7-)After step 6, call /cart endpoint to make sure that your cart is emptied
 8-)You can repeat from step 1 to 6 in same manner and fill your cart and transfer the cart contents this time to another userId (e.g by calling create/2 . 
+
 ****ControllerAdmin API*****
+
 /admin/create -> creates a new item
 e.g Send the following json with Postman by calling /create
 {
@@ -59,6 +64,7 @@ E.g
     }
   ]
 }
+
 2-) /admin/reports/most-used-toppings-for-drinks -> shows all used toppings for all carts with the most big at the top and the lowest at the bottom.
 E.g
 {
