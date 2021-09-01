@@ -1,4 +1,5 @@
 Endpoints----------
+
 /menu -> returns all the available toppings and drinks list
 /cart -> returns all the drinks with toppings(if they have)
 /addItem -> adds new items to the cart if the requested item is in the menu.
